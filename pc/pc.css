@@ -6,7 +6,9 @@
 }
 body{
     background: rgb(2,0,36);
-    background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgb(78, 159, 226) 0%, rgb(179, 214, 236) 100%);
+    background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgb(255, 243, 222) 0%, rgb(118, 191, 231) 100%);
+    /* background: rgb(255,255,255);
+background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgb(161, 208, 255) 81%); */
 }
 .auto{
     position: relative;
@@ -234,7 +236,7 @@ body{
     border-radius: 35px;
     background-color: #ffffff;
     opacity: 0.8;
-    margin-top: 1%;
+    margin-top: 1.5%;
     margin-left: auto;
     margin-right: 5%;
     right: 0;
