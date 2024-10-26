@@ -1,12 +1,27 @@
+#include <OneWire.h>
+#include <DallasTemperature.h>
+#include <Servo.h>
+#include <WiFiS3.h>
+#include <WiFiClient.h>
+
+#define ONE_WIRE_BUS 2 //กำหนดว่าขาของเซนเซอร์ 18B20 ต่อกับขา 2
+
+const char* ssid = "ENDDOWN";      // Your SSID
+const char* password = "02122547";  // Your Password
+
+const int trigPin = 9;
+const int echoPin = 10;
+long duration;
+int distanceCm, distanceInch;
+int temp = 0, distance = 0;
+String generateHTML(double temp_, int food) {
+    String html = R"rawliteral(
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>pc</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Afacad+Flux:wght@100..1000&family=Concert+One&family=Itim&family=Marcellus&family=PT+Sans+Caption:wght@400;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
     <style>
         *{
         margin: 0;
@@ -274,7 +289,6 @@
         right: 0;
         box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);
 
-
         p{
             font-size: 3vh;
             text-align: center;
@@ -295,21 +309,20 @@
     </div>
     <div class="tem">
         <p>Temperature-Now</p>
-        <p class="tempo">31°C</p>
+        <p class="tempo">%TEMP%°C</p>
     </div>
     <div class="emoji">
         <div class="sta"><p>Status</p></div>
-        <div class="emo"><p>🔥 o(╥﹏╥)o 🔥</p></div>
+        <div class="emo"><p>%EMO%</p></div>
     </div>
     <div class="noti">
         <div class="not"><label for="text" >Notification</label></div>
-        <div class="sentnoti">
-            <p>ร้อนมากกกก</p>
-        </div>
-        <div class="sentnoti">
-            <p>ร้อนมากกกก</p>
-        </div>
-        <!-- <p>Please take care of your fish!</p> -->
+          <div class="sentnoti">
+            <p>%TEMPno%</p>
+          </div>
+          <div class="sentnoti">
+            <p>%FOODno%</p>
+          </div>
     </div>
     <div class="timer">
         <div class="feeder">
@@ -330,9 +343,126 @@
     </div>
     <div class="food">
         <p>Amount of food</p>
-        <p class="amount">30%</p>
+        <p class="amount">%FOOD% %</p>
     </div>
     
     
 </body>
 </html>
+)rawliteral";
+
+    // Replace placeholders with actual values
+    html.replace("%TEMP%", String(temp_));
+    html.replace("%FOOD%", String(food));
+    String tempStatus;
+    if (temp_ < 24) {
+        tempStatus = "Water temperature too cool. ❄️!!!";
+    } else if (temp_ > 28) {
+        tempStatus = "Water temperature too hot. 🔥!!!";
+    } else {
+        tempStatus = "Water temperature was good. :D";
+    }
+    html.replace("%TEMPno%", tempStatus);
+
+    String foodStatus;
+      if (food < 30) {
+          html.replace("%FOODno%", String("Thefood"));
+      } else {
+          foodStatus = "The food level was good :D";
+      }
+    
+    
+    return html;
+}
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+Servo myServo;
+WiFiServer server(80);
+
+void setup(){
+  Serial.begin(9600); // Initialize serial communication at 9600 bits per second
+  sensors.begin();
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  myServo.attach(9);  // Attach the servo to pin = 9
+
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nConnected to WiFi network");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+  
+  server.begin(); // Start the server
+}
+
+int getTemp() {
+  sensors.requestTemperatures(); //สั่งอ่านค่าอุณหภูมิ
+  return sensors.getTempCByIndex(0); // แสดงค่าอุณหภูมิ
+}
+
+int getDistance() {
+  // lear trigPin
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+
+  // Set the trigPin HIGH for 10 microseconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+    
+  // Read the echoPin, return the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+
+  // Calculate the distance in cm and inches
+  distanceCm = duration * 0.034 / 2;
+  distanceInch = duration * 0.0133 / 2;
+
+  return distanceCm;
+}
+
+void openServo() {
+  myServo.write(90);
+}
+
+void closeServo() {
+  myServo.write(0);
+}
+
+void runWebServer() {
+  WiFiClient client = server.available(); // Listen for incoming clients
+
+  if (client) {
+    Serial.println("New Client Connected.");
+    String request = client.readStringUntil('\r'); // Read the request
+    Serial.println(request);
+    client.flush();
+
+    // Send a response to the client
+    client.println("HTTP/1.1 200 OK");
+    client.println("Content-Type: text/html");
+    client.println("Connection: close");
+    client.println();
+    Serial.println(generateHTML(40, 10));
+    client.print(generateHTML(40, 10));
+
+    delay(1);
+    client.stop(); // Close the connection
+    Serial.println("Client Disconnected.");
+  }
+}
+
+void loop() {
+  temp = getTemp();
+  distance = getDistance();
+  runWebServer();
+  
+  delay(1000);
+}
