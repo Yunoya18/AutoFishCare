@@ -6,373 +6,289 @@
 
 #define ONE_WIRE_BUS 2 //กำหนดว่าขาของเซนเซอร์ 18B20 ต่อกับขา 2
 
-const char* ssid = "ENDDOWN";      // Your SSID
-const char* password = "02122547";  // Your Password
+const char* ssid = "_m";      // Your SSID
+const char* password = "manza007";  // Your Password
 
 const int trigPin = 9;
 const int echoPin = 10;
 long duration;
 int distanceCm, distanceInch;
 int temp = 0, distance = 0;
-String generateHTML(double temp_, int food) {
-    String html = R"rawliteral(
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pc</title>
-    <style>
-        *{
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: "Itim", cursive;
-        font-weight: 400;
-        font-style: normal;
-    }
-    body{
-        background: rgb(2,0,36);
-        background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgb(255, 243, 222) 0%, rgb(118, 191, 231) 100%);
-        /* background: rgb(255,255,255);
-    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgb(161, 208, 255) 81%); */
-    }
-    .auto{
-        position: relative;
-        width: 100%;
-        height: 200px;
-        padding: 25px;
-        margin-left: auto;
-        margin-right: auto;
-        border-radius: 35px;
-        background-color: aliceblue;    
-        margin-top: 3%;
-        justify-content: center;
-        max-width: 90%;
-        box-shadow: 2px 4px 8px 2px rgba(255, 255, 255, 0.64), 0 6px 20px 0 rgba(255, 255, 255, 0.346);
-
-    }
-
-    .text{
-        font-size: 15vh;
-        text-align: center;
-        color: rgb(54, 130, 206);
-    }
-
-    .not{
-        /* position: absolute; */
-        font-size: 4vh;
-        text-align: center;
-        color: rgb(54, 130, 206);
-    }
-
-    .tem{
-        position: relative;
-        width: 100%;
-        height: 230px;
-        padding: 25px;
-        /* align-items:  */
-        margin-left: 5%;
-        border-radius: 35px;
-        background-color: #ffffff;
-        margin-top: 2%;
-        /* justify-content: center; */
-        max-width: 20%;
-        opacity: 0.8;
-        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);
-
-
-        p{
-            font-size: 3vh;
-            text-align: center;
-            color: rgb(54, 130, 206);
-        }
-        .tempo{
-            font-size: 9vh;
-            text-align: center;
-            color: rgb(54, 130, 206);
-            margin-top: 20px;
-        }
-    }
-
-    .emoji{
-        position: relative;
-        width: 100%;
-        height: 230px;
-        padding: 25px;
-        margin-top: -20px;
-        margin-left: 5%;
-        border-radius: 35px;
-        background-color: #ffffff;
-        margin-top: 2%;
-        max-width: 20%;
-        opacity: 0.8;
-        align-items: center;
-        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);
-
-    }
-    .emo{
-        font-size: 4vh;
-        margin-top: 15%;
-        text-align: center;
-        justify-items: center;
-        color: rgb(54, 130, 206);
-    }
-    .sta{
-        font-size: 3vh;
-        text-align: center;
-        justify-items: center;
-        color: rgb(54, 130, 206);
-    }
-
-    .noti{
-        position: relative;
-        /* display: flex; */
-        width: 30%;
-        height: 300px;
-        padding: 25px;
-        border-radius: 35px;
-        background-color: #ffffff;
-        opacity: 0.8;
-        margin-top: -490px; /* ปรับระยะห่างจาก .auto */
-        margin-left: auto;
-        margin-right: 5%;
-        right: 0;
-        overflow: scroll;
-        overflow-y: auto; /* เปิดการ scroll แนวตั้ง */
-        overflow-x: auto; /* ซ่อนการ scroll แนวนอน */
-        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);
-        
-
-
-    }
-
-    /* p{
-        font-size: 3vh;
-        text-align: center;
-        color: rgb(54, 130, 206);
-        margin-top: 3%;
-    } */
-
-    .sentnoti{
-        position: relative;
-        margin-top: 5%;
-        width: 90%;
-        height: 70px;
-        padding: 25px;
-        border-radius: 25px;
-        background-color: #9fd2f4;
-        align-items: center;
-        margin-left: auto;
-        margin-right: auto
-    }
-
-
-    .timer{
-        position: absolute;
-        width: 35%;
-        height: 490px;
-        padding: 25px;
-        border-radius: 35px;
-        background-color: #ffffff;
-        opacity: 0.8;
-        margin-top: -300px; /* ระดับเดียวกับ .noti */
-        left: 27.5%;
-        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);
-
-    }
-
-    .feeder{
-        font-size: 4vh;
-        /* text-align: center; */
-        color: rgb(54, 130, 206);
-        margin-left: 4%;
-    }
-
-
-    .box{
-        position: relative;
-        margin-top: 3%;
-        width: 90%;
-        height: 250px;
-        padding: 25px;
-        border-radius: 25px;
-        background-color: #9fd2f4;
-        align-items: center;
-        margin-left: auto;
-        margin-right: auto
-    }
-    .but{
-        display: flex; /* ทำให้เป็น flex container */
-        justify-content: center; /* จัดกลางในแนวนอน */
-        align-items: center; /* จัดกลางในแนวตั้ง */
-        margin-top: 10px;
-    }
-    .but button{
-        height: 6.5vh;
-        width: 60%;
-        color: #ffffff;
-        font-size: 1.7vh;
-        font-weight: 400;
-        margin-top: 30px;
-        border: none;
-        border-radius: 2vh;
-        background-color: #ecb5df;
-        font-size: 3vh;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .but button:hover{
-        background-color: #b3d5fa;
-    }
-
-    .input-box input{
-        position: relative;
-        height: 6vh;
-        width: 80%;
-        outline: none;
-        font-size: 1.5vh;
-        color: #000000;
-        margin-top: 20px;
-        margin-left: 32px;
-        border: none;
-        border-radius: 7px;
-        padding: 0 15px;
-        font-size: 2vh;
-        color: #5ab7f5;
-    }
-
-    .box p{
-        font-size: 3vh;
-        text-align: center;
-        color: rgb(54, 130, 206);
-        /* margin-top: 6%; */
-    }
-
-    .but2{
-        display: flex; /* ทำให้เป็น flex container */
-        justify-content: center; /* จัดกลางในแนวนอน */
-        align-items: center; /* จัดกลางในแนวตั้ง */
-        margin-top: 10px;
-    }
-    .but2 button{
-        height: 5vh;
-        width: 40%;
-        color: #ffffff;
-        font-size: 1.7vh;
-        font-weight: 400;
-        margin-top: 30px;
-        border: none;
-        border-radius: 1vh;
-        background-color: #6fbcff;
-        font-size: 2vh;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .but2 button:hover{
-        background-color: #f7d8fc;
-    }
-    .food{
-        position: absolute;
-        /* display: flex; */
-        width: 30%;
-        height: 165px;
-        padding: 25px;
-        border-radius: 35px;
-        background-color: #ffffff;
-        opacity: 0.8;
-        margin-top: 1.5%;
-        margin-left: auto;
-        margin-right: 5%;
-        right: 0;
-        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);
-
-        p{
-            font-size: 3vh;
-            text-align: center;
-            color: rgb(54, 130, 206);
-        }
-
-        .amount{
-            font-size: 7vh;
-            text-align: center;
-            color: rgb(54, 130, 206);
-        }
-    }
-    </style>
-</head>
-<body>
-    <div class="auto">
-        <div class="text"><label for="text">Auto-Fishcare</label></div>
-    </div>
-    <div class="tem">
-        <p>Temperature-Now</p>
-        <p class="tempo">%TEMP%°C</p>
-    </div>
-    <div class="emoji">
-        <div class="sta"><p>Status</p></div>
-        <div class="emo"><p>%EMO%</p></div>
-    </div>
-    <div class="noti">
-        <div class="not"><label for="text" >Notification</label></div>
-          <div class="sentnoti">
-            <p>%TEMPno%</p>
-          </div>
-          <div class="sentnoti">
-            <p>%FOODno%</p>
-          </div>
-    </div>
-    <div class="timer">
-        <div class="feeder">
-            <div><p>Set timer/Feeder</p></div>
-        </div>
-        <div class="box">
-            <div><p>Set time</p></div>
-            <div class="input-box">
-                <input type="time" placeholder="" required>
-            </div>
-            <div class="but2">
-                <button>Submit</button>
-            </div>
-        </div>
-        <div class="but">
-            <button>Feed now</button>
-        </div>
-    </div>
-    <div class="food">
-        <p>Amount of food</p>
-        <p class="amount">%FOOD% %</p>
-    </div>
-    
-    
-</body>
-</html>
-)rawliteral";
-
-    // Replace placeholders with actual values
-    html.replace("%TEMP%", String(temp_));
-    html.replace("%FOOD%", String(food));
-    String tempStatus;
+String setvaluesHTML(double temp_, int food){
+  String tempStatus,emo;
     if (temp_ < 24) {
-        tempStatus = "Water temperature too cool. ❄️!!!";
+      emo = "❄️ o(╥﹏╥)o ❄️";
+      tempStatus = "Water temperature too cool. ❄️!!!";
     } else if (temp_ > 28) {
+        emo = "🔥 o(╥﹏╥)o 🔥";
         tempStatus = "Water temperature too hot. 🔥!!!";
     } else {
-        tempStatus = "Water temperature was good. :D";
+        emo = "🎉 (≧▽≦) 🎉";
+        tempStatus = "Water temperature is good. :D";
     }
-    html.replace("%TEMPno%", tempStatus);
-
     String foodStatus;
       if (food < 30) {
-          html.replace("%FOODno%", String("Thefood"));
+          foodStatus = "The food level is low. Please refill.";
       } else {
           foodStatus = "The food level was good :D";
       }
-    
-    
-    return html;
+  String html = "";
+  html += "        opacity: 0.8;\n";
+  html += "        margin-top: 1.5%;\n";
+  html += "        margin-left: auto;\n";
+  html += "        margin-right: 5%;\n";
+  html += "        right: 0;\n";
+  html += "        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);\n";
+  html += "    }\n";
+  html += "    .food p{\n";
+  html += "        font-size: 3vh;\n";
+  html += "        text-align: center;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "    }\n";
+  html += "    .food .amount{\n";
+  html += "        font-size: 7vh;\n";
+  html += "        text-align: center;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "    }\n";
+  html += "</style>\n";
+  html += "</head>\n";
+  html += "<body>\n";
+  html += "    <div class=\"auto\">\n";
+  html += "        <div class=\"text\"><label for=\"text\">Auto-Fishcare</label></div>\n";
+  html += "    </div>\n";
+  html += "    <div class=\"tem\"><p>Temperature-Now</p><p class=\"tempo\">"+String(temp_)+"°C</p></div>\n";
+  html += "    <div class=\"emoji\"><div class=\"sta\"><p>Status</p></div><div class=\"emo\"><p>"+emo+"</p></div></div>\n";
+  html += "    <div class=\"noti\"><div class=\"not\"><label for=\"text\">Notification</label></div><div class=\"sentnoti\"><p>"+tempStatus+"</p></div><div class=\"sentnoti\"><p>"+foodStatus+"</p></div></div>\n";
+  html += "    <div class=\"timer\"><div class=\"feeder\"><p>Set timer/Feeder</p></div><div class=\"box\"><form action=\"/submit\" method=\"POST\"><div><p>Set time</p></div><div class=\"input-box\"><input type=\"time\" id=\"timeInput\" name=\"timeInput\" required></div><div class=\"but2\"><button type=\"submit\">Submit</button></div></form></div><form action=\"/feed\" method=\"POST\"><div class=\"but\"><button>Feed now</button></div></form></div>\n";
+  html += "    <div class=\"food\"><p>Amount of food</p><p class=\"amount\">"+String(food)+" %</p></div>\n";
+  html += "</body>\n";
+  html += "</html>";
+  return html;
+}
+String generateHTML() {
+  String html = "<!DOCTYPE html>\n";
+  html += "<html lang=\"en\">\n";
+  html += "<head>\n";
+  html += "    <meta charset=\"UTF-8\">\n";
+  html += "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
+  html += "    <title>pc</title>\n";
+  html += "<style>\n";
+  html += "    *{\n";
+  html += "        margin: 0;\n";
+  html += "        padding: 0;\n";
+  html += "        box-sizing: border-box;\n";
+  html += "        font-family: \"Itim\", cursive;\n";
+  html += "        font-weight: 400;\n";
+  html += "        font-style: normal;\n";
+  html += "    }\n";
+  html += "    body{\n";
+  html += "        background: rgb(2,0,36);\n";
+  html += "        background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgb(255, 243, 222) 0%, rgb(118, 191, 231) 100%);\n";
+  html += "    }\n";
+  html += "    .auto{\n";
+  html += "        position: relative;\n";
+  html += "        width: 100%;\n";
+  html += "        height: 200px;\n";
+  html += "        padding: 25px;\n";
+  html += "        margin-left: auto;\n";
+  html += "        margin-right: auto;\n";
+  html += "        border-radius: 35px;\n";
+  html += "        background-color: aliceblue;\n";
+  html += "        margin-top: 3%;\n";
+  html += "        justify-content: center;\n";
+  html += "        max-width: 90%;\n";
+  html += "        box-shadow: 2px 4px 8px 2px rgba(255, 255, 255, 0.64), 0 6px 20px 0 rgba(255, 255, 255, 0.346);\n";
+  html += "    }\n";
+  html += "    .text{\n";
+  html += "        font-size: 15vh;\n";
+  html += "        text-align: center;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "    }\n";
+  html += "    .not{\n";
+  html += "        font-size: 4vh;\n";
+  html += "        text-align: center;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "    }\n";
+  html += "    .tem{\n";
+  html += "        position: relative;\n";
+  html += "        width: 100%;\n";
+  html += "        height: 230px;\n";
+  html += "        padding: 25px;\n";
+  html += "        margin-left: 5%;\n";
+  html += "        border-radius: 35px;\n";
+  html += "        background-color: #ffffff;\n";
+  html += "        margin-top: 2%;\n";
+  html += "        max-width: 20%;\n";
+  html += "        opacity: 0.8;\n";
+  html += "        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);\n";
+  html += "    }\n";
+  html += "    .tem p{\n";
+  html += "        font-size: 3vh;\n";
+  html += "        text-align: center;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "    }\n";
+  html += "    .tem .tempo{\n";
+  html += "        font-size: 9vh;\n";
+  html += "        text-align: center;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "        margin-top: 20px;\n";
+  html += "    }\n";
+  html += "    .emoji{\n";
+  html += "        position: relative;\n";
+  html += "        width: 100%;\n";
+  html += "        height: 230px;\n";
+  html += "        padding: 25px;\n";
+  html += "        margin-top: -20px;\n";
+  html += "        margin-left: 5%;\n";
+  html += "        border-radius: 35px;\n";
+  html += "        background-color: #ffffff;\n";
+  html += "        margin-top: 2%;\n";
+  html += "        max-width: 20%;\n";
+  html += "        opacity: 0.8;\n";
+  html += "        align-items: center;\n";
+  html += "        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);\n";
+  html += "    }\n";
+  html += "    .emoji .emo{\n";
+  html += "        font-size: 4vh;\n";
+  html += "        margin-top: 15%;\n";
+  html += "        text-align: center;\n";
+  html += "        justify-items: center;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "    }\n";
+  html += "    .emoji .sta{\n";
+  html += "        font-size: 3vh;\n";
+  html += "        text-align: center;\n";
+  html += "        justify-items: center;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "    }\n";
+  html += "    .noti{\n";
+  html += "        position: relative;\n";
+  html += "        width: 30%;\n";
+  html += "        height: 300px;\n";
+  html += "        padding: 25px;\n";
+  html += "        border-radius: 35px;\n";
+  html += "        background-color: #ffffff;\n";
+  html += "        opacity: 0.8;\n";
+  html += "        margin-top: -490px;\n";
+  html += "        margin-left: auto;\n";
+  html += "        margin-right: 5%;\n";
+  html += "        right: 0;\n";
+  html += "        overflow: scroll;\n";
+  html += "        overflow-y: auto;\n";
+  html += "        overflow-x: auto;\n";
+  html += "        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);\n";
+  html += "    }\n";
+  html += "    .sentnoti{\n";
+  html += "        position: relative;\n";
+  html += "        margin-top: 5%;\n";
+  html += "        width: 90%;\n";
+  html += "        height: 70px;\n";
+  html += "        padding: 25px;\n";
+  html += "        border-radius: 25px;\n";
+  html += "        background-color: #9fd2f4;\n";
+  html += "        align-items: center;\n";
+  html += "        margin-left: auto;\n";
+  html += "        margin-right: auto;\n";
+  html += "    }\n";
+  html += "    .timer{\n";
+  html += "        position: absolute;\n";
+  html += "        width: 35%;\n";
+  html += "        height: 490px;\n";
+  html += "        padding: 25px;\n";
+  html += "        border-radius: 35px;\n";
+  html += "        background-color: #ffffff;\n";
+  html += "        opacity: 0.8;\n";
+  html += "        margin-top: -300px;\n";
+  html += "        left: 27.5%;\n";
+  html += "        box-shadow: 2px 4px 8px 2px rgb(255, 255, 255);\n";
+  html += "    }\n";
+  html += "    .feeder{\n";
+  html += "        font-size: 4vh;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "        margin-left: 4%;\n";
+  html += "    }\n";
+  html += "    .box{\n";
+  html += "        position: relative;\n";
+  html += "        margin-top: 3%;\n";
+  html += "        width: 90%;\n";
+  html += "        height: 250px;\n";
+  html += "        padding: 25px;\n";
+  html += "        border-radius: 25px;\n";
+  html += "        background-color: #9fd2f4;\n";
+  html += "        align-items: center;\n";
+  html += "        margin-left: auto;\n";
+  html += "        margin-right: auto;\n";
+  html += "    }\n";
+  html += "    .but{\n";
+  html += "        display: flex;\n";
+  html += "        justify-content: center;\n";
+  html += "        align-items: center;\n";
+  html += "        margin-top: 10px;\n";
+  html += "    }\n";
+  html += "    .but button{\n";
+  html += "        height: 6.5vh;\n";
+  html += "        width: 60%;\n";
+  html += "        color: #ffffff;\n";
+  html += "        font-size: 3vh;\n";
+  html += "        font-weight: 400;\n";
+  html += "        margin-top: 30px;\n";
+  html += "        border: none;\n";
+  html += "        border-radius: 2vh;\n";
+  html += "        background-color: #ecb5df;\n";
+  html += "        cursor: pointer;\n";
+  html += "        transition: all 0.2s ease;\n";
+  html += "    }\n";
+  html += "    .but button:hover{\n";
+  html += "        background-color: #b3d5fa;\n";
+  html += "    }\n";
+  html += "    .input-box input{\n";
+  html += "        position: relative;\n";
+  html += "        height: 6vh;\n";
+  html += "        width: 80%;\n";
+  html += "        outline: none;\n";
+  html += "        font-size: 2vh;\n";
+  html += "        color: #5ab7f5;\n";
+  html += "        margin-top: 20px;\n";
+  html += "        margin-left: 32px;\n";
+  html += "        border: none;\n";
+  html += "        border-radius: 7px;\n";
+  html += "        padding: 0 15px;\n";
+  html += "    }\n";
+  html += "    .box p{\n";
+  html += "        font-size: 3vh;\n";
+  html += "        text-align: center;\n";
+  html += "        color: rgb(54, 130, 206);\n";
+  html += "    }\n";
+  html += "    .but2{\n";
+  html += "        display: flex;\n";
+  html += "        justify-content: center;\n";
+  html += "        align-items: center;\n";
+  html += "        margin-top: 10px;\n";
+  html += "    }\n";
+  html += "    .but2 button{\n";
+  html += "        height: 5vh;\n";
+  html += "        width: 40%;\n";
+  html += "        color: #ffffff;\n";
+  html += "        font-size: 2vh;\n";
+  html += "        font-weight: 400;\n";
+  html += "        margin-top: 30px;\n";
+  html += "        border: none;\n";
+  html += "        border-radius: 1vh;\n";
+  html += "        background-color: #6fbcff;\n";
+  html += "        cursor: pointer;\n";
+  html += "        transition: all 0.2s ease;\n";
+  html += "    }\n";
+  html += "    .but2 button:hover{\n";
+  html += "        background-color: #f7d8fc;\n";
+  html += "    }\n";
+  html += "    .food{\n";
+  html += "        position: absolute;\n";
+  html += "        width: 30%;\n";
+  html += "        height: 165px;\n";
+  html += "        padding: 25px;\n";
+  html += "        border-radius: 35px;\n";
+  html += "        background-color: #ffffff;\n";
+return html;
 }
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
@@ -444,19 +360,44 @@ void runWebServer() {
     String request = client.readStringUntil('\r'); // Read the request
     Serial.println(request);
     client.flush();
-
+    String requestBody = "";
+        while (client.available()) {
+            requestBody += client.readString(); // อ่านข้อมูลที่เหลือจาก client
+        }
+    Serial.println("Request Body:");
+    Serial.println(requestBody);
+    if (request.indexOf("POST /submit") >= 0) {
+        String timeValue = getPostParameter(requestBody, "timeInput");
+        Serial.println("Received time: " + timeValue);
+    } else if (request.indexOf("POST /feed") >= 0){
+      Serial.println("feed");
+    }
     // Send a response to the client
     client.println("HTTP/1.1 200 OK");
     client.println("Content-Type: text/html");
     client.println("Connection: close");
     client.println();
-    Serial.println(generateHTML(40, 10));
-    client.print(generateHTML(40, 10));
+    // Serial.println(generateHTML(40, 10));
+    client.print(generateHTML());
+    client.print(setvaluesHTML(40, 10));
 
     delay(1);
     client.stop(); // Close the connection
     Serial.println("Client Disconnected.");
   }
+}
+
+String getPostParameter(String request, String parameter) {
+    int startIndex = request.indexOf(parameter + "=");
+    if (startIndex == -1) return "";
+
+    startIndex += parameter.length() + 1; // ข้ามชื่อ parameter และ "="
+
+    int endIndex = request.indexOf("&", startIndex);
+    if (endIndex == -1) endIndex = request.length(); // หากไม่มี "&" ให้ใช้ถึงท้าย
+    String timeString = request.substring(startIndex, endIndex);
+    timeString.replace("%3A", ":");
+    return timeString; // คืนค่าที่ได้
 }
 
 void loop() {
