@@ -3,17 +3,22 @@
 #include <Servo.h>
 #include <WiFiS3.h>
 #include <WiFiClient.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 
 #define ONE_WIRE_BUS 2 //กำหนดว่าขาของเซนเซอร์ 18B20 ต่อกับขา 2
 
-const char* ssid = "_m";      // Your SSID
-const char* password = "manza007";  // Your Password
+const char* ssid = "YuuuuuY";      // Your SSID
+const char* password = "0814822764";  // Your Password
 
-const int trigPin = 9;
-const int echoPin = 10;
+const int trigPin = 10;
+const int echoPin = 11;
 long duration;
 int distanceCm, distanceInch;
 int temp = 0, distance = 0;
+bool isOpen = false;
+String currentTime;
+
 String setvaluesHTML(double temp_, int food){
   String tempStatus,emo;
     if (temp_ < 24) {
@@ -295,6 +300,9 @@ DallasTemperature sensors(&oneWire);
 Servo myServo;
 WiFiServer server(80);
 
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 25200, 60000);
+
 void setup(){
   Serial.begin(9600); // Initialize serial communication at 9600 bits per second
   sensors.begin();
@@ -302,19 +310,12 @@ void setup(){
   pinMode(echoPin, INPUT);
   myServo.attach(9);  // Attach the servo to pin = 9
 
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-
-  Serial.println("\nConnected to WiFi network");
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());
   
   server.begin(); // Start the server
 }
@@ -325,7 +326,7 @@ int getTemp() {
 }
 
 int getDistance() {
-  // lear trigPin
+  // clear trigPin
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
 
@@ -349,10 +350,11 @@ void openServo() {
 }
 
 void closeServo() {
-  myServo.write(0);
+  myServo.write(7);
 }
 
-void runWebServer() {
+void runWebServer(double temp, double distance) {
+  Serial.println(WiFi.localIP());
   WiFiClient client = server.available(); // Listen for incoming clients
 
   if (client) {
@@ -370,7 +372,12 @@ void runWebServer() {
         String timeValue = getPostParameter(requestBody, "timeInput");
         Serial.println("Received time: " + timeValue);
     } else if (request.indexOf("POST /feed") >= 0){
-      Serial.println("feed");
+      if (true){
+        openServo();
+        delay(500);
+        closeServo();
+      }
+        Serial.println("feed");
     }
     // Send a response to the client
     client.println("HTTP/1.1 200 OK");
@@ -379,7 +386,7 @@ void runWebServer() {
     client.println();
     // Serial.println(generateHTML(40, 10));
     client.print(generateHTML());
-    client.print(setvaluesHTML(40, 10));
+    client.print(setvaluesHTML(temp, distance));
 
     delay(1);
     client.stop(); // Close the connection
@@ -403,7 +410,9 @@ String getPostParameter(String request, String parameter) {
 void loop() {
   temp = getTemp();
   distance = getDistance();
-  runWebServer();
+  runWebServer(temp, distance);
+  timeClient.update();
+  Serial.println(timeClient.getFormattedTime().substring(0, 5));
   
   delay(1000);
 }
