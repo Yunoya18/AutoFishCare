@@ -18,6 +18,7 @@ int distanceCm, distanceInch;
 int temp = 0, distance = 0;
 bool isOpen = false;
 String currentTime;
+String timeValue = "00:00";
 
 String setvaluesHTML(double temp_, int food){
   String tempStatus,emo;
@@ -293,7 +294,7 @@ String generateHTML() {
   html += "        padding: 25px;\n";
   html += "        border-radius: 35px;\n";
   html += "        background-color: #ffffff;\n";
-return html;
+  return html;
 }
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
@@ -341,16 +342,17 @@ int getDistance() {
   // Calculate the distance in cm and inches
   distanceCm = duration * 0.034 / 2;
   distanceInch = duration * 0.0133 / 2;
+  distanceCm = -6.25 * distanceCm + 100;
 
   return distanceCm;
 }
 
 void openServo() {
-  myServo.write(90);
+  myServo.write(70);
 }
 
 void closeServo() {
-  myServo.write(7);
+  myServo.write(100);
 }
 
 void runWebServer(double temp, double distance) {
@@ -369,12 +371,12 @@ void runWebServer(double temp, double distance) {
     Serial.println("Request Body:");
     Serial.println(requestBody);
     if (request.indexOf("POST /submit") >= 0) {
-        String timeValue = getPostParameter(requestBody, "timeInput");
+        timeValue = getPostParameter(requestBody, "timeInput");
         Serial.println("Received time: " + timeValue);
     } else if (request.indexOf("POST /feed") >= 0){
       if (true){
         openServo();
-        delay(500);
+        delay(700);
         closeServo();
       }
         Serial.println("feed");
@@ -407,12 +409,24 @@ String getPostParameter(String request, String parameter) {
     return timeString; // คืนค่าที่ได้
 }
 
+bool checkTime() {
+  timeClient.update();
+  currentTime = timeClient.getFormattedTime();
+  String currentHour = currentTime.substring(0, 5);
+  int currentSec = currentTime.substring(6, 8).toInt();
+  Serial.println(String(currentTime) + ", " + String(timeValue));
+  if ((currentHour == timeValue) && (currentSec < 3)){
+    openServo();
+    delay(700);
+    closeServo();
+  }
+}
+
 void loop() {
   temp = getTemp();
   distance = getDistance();
   runWebServer(temp, distance);
-  timeClient.update();
-  Serial.println(timeClient.getFormattedTime().substring(0, 5));
+  checkTime();
   
   delay(1000);
 }
