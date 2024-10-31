@@ -8,8 +8,8 @@
 
 #define ONE_WIRE_BUS 2 //กำหนดว่าขาของเซนเซอร์ 18B20 ต่อกับขา 2
 
-const char* ssid = "YuuuuuY";      // Your SSID
-const char* password = "0814822764";  // Your Password
+const char* ssid = "";      // Your SSID
+const char* password = "";  // Your Password
 
 const int trigPin = 10;
 const int echoPin = 11;
@@ -296,6 +296,7 @@ String generateHTML() {
   html += "        background-color: #ffffff;\n";
   return html;
 }
+
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 Servo myServo;
