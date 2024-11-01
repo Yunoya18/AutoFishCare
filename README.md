@@ -11,21 +11,22 @@
 
 ## Library ที่ใช้งาน
 ```c++
-#include
-  -OneWire
-  -Servo
-  -DallasTemperature
-  -WiFiS3
-  -WiFiClient
-  -NTPClient
-  -WiFiUdp
+#include <OneWire.h>
+#include <Servo.h>
+#include <DallasTemperature.h>
+#include <WiFi.h>
+#include <WiFiClient.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
 ```
 
 ## Website
 
 ## Project Demo Video
-> ![Project Demo Video](https://youtu.be/JoBmouosOzM)
+[![Project Demo Video](https://img.youtube.com/vi/JoBmouosOzM/0.jpg)](https://youtu.be/JoBmouosOzM)
 
+## Poster
+![Poster](/poster.png)
 ## Contributers
 * นายปณวัฒน์ ธรรมเจริญ 66070113
 * นายสรวิชญ์ กาญจนสันติศักดิ์ 66070199
