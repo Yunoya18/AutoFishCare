@@ -228,14 +228,14 @@ header .fa-bars{
 
 
 .text{
-    padding-top: 30px;
+    margin-top: 3%;
 }
 .textinput{
     font-size: 4vh;
     margin-left: 5%;
     color: #3682ce;
     position: relative;
-    top: 3%; 
+    /* top: 3%;  */
 }
 
 .ansinput{
@@ -243,7 +243,7 @@ header .fa-bars{
     margin-left: 8%;
     color: #3b9bc7;
     position: relative;
-    margin-top: 1%; 
+    margin-top: -1%; 
     text-shadow: rgba(146, 196, 231, 0.9) 0px 0px 39px;
 }
 
@@ -260,7 +260,7 @@ header .fa-bars{
     margin-left: 8%;
     color: #3b9bc7;
     position: relative;
-    margin-top: 1.2%; 
+    margin-top: -1%; 
     text-shadow: rgba(146, 196, 231, 0.9) 0px 0px 39px;
 
 
@@ -424,7 +424,7 @@ a:visited {
     flex-direction: column; 
     justify-content: center; 
     align-items: center;
-    margin-top: 15px;
+    /* margin-top: 15px; */
 
     .name{
         font-size: 3vh;
@@ -432,9 +432,75 @@ a:visited {
 
     .id{
         font-size: 2.5vh;
-        margin-top: 0;
+        margin-top: -18px;
     }
 }
+
+
+/* อุปกรณ์ */
+.project4{
+    /* margin-top: 7%; */
+    font-size: 6vh;
+    padding-top: 2%;
+    font-weight: bold;
+    justify-content: center;
+    text-align: center;
+    /* text-decoration: underline; */
+    color: #709ed0;
+    
+}
+.allbox4{
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    gap: 20px; 
+    flex-wrap: wrap; 
+    margin-top: 2%;
+    color:  #dc94b0;
+}
+.box4{
+    width: 320px;
+    height: 400px;
+    background-color: #e8d4ed;
+    border-radius: 24px;
+    -webkit-box-shadow:0px 0px 35px 4px rgba(140,247,255,0.47);
+    -moz-box-shadow: 0px 0px 35px 4px rgba(140,247,255,0.47);
+    box-shadow: 0px 0px 35px 4px rgba(140,247,255,0.47);}
+.allmem4{
+    width: 100%;
+    height: 700px;
+    background-color: #e6f4fc;
+    
+}
+.dpic4 {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+.mempic4{
+    margin-top: 4%;
+    width: 70%;
+    max-width: 100%; /* จำกัดไม่ให้เกินขนาดกล่อง */
+    height: 250px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+.namelast4{
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;
+    /* margin-top: 15px; */
+
+    .name{
+        font-size: 3vh;
+    }
+}
+
+
 @media (max-width: 768px) {
     .container {
         font-size: 4vh;
