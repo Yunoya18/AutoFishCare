@@ -536,7 +536,7 @@ a:visited {
         display: block; /* แสดงไอคอน menu */
     }
     header .fisht {
-        margin-right: 140px; /* ลดมาร์จิ้นด้านขวาในหน้าจอเล็ก */
+        margin-right: 120px; /* ลดมาร์จิ้นด้านขวาในหน้าจอเล็ก */
     }
 
     .iframe {
